@@ -17,23 +17,37 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   int? selectedCategoryIndex;
   final List<Map<String, dynamic>> categories = [
     {
-      'name': 'الکترونیک',
-      'icon': Icons.electrical_services,
+      'name': 'موتور و گیربکس',
+      'icon': Icons.settings_overscan,
       'color': Colors.blue
     },
-    {'name': 'پوشاک', 'icon': Icons.checkroom, 'color': Colors.pink},
-    {'name': 'لوازم خانگی', 'icon': Icons.home, 'color': Colors.orange},
     {
-      'name': 'کتاب و لوازم تحریر',
-      'icon': Icons.menu_book,
-      'color': Colors.purple
+      'name': 'سیستم تعلیق و فرمان',
+      'icon': Icons.swap_horiz,
+      'color': Colors.deepPurple
     },
-    {'name': 'ورزشی', 'icon': Icons.sports_soccer, 'color': Colors.green},
-    {'name': 'زیبایی و سلامت', 'icon': Icons.spa, 'color': Colors.teal},
-    {'name': 'ابزار', 'icon': Icons.build, 'color': Colors.brown},
-    {'name': 'اسباب بازی', 'icon': Icons.toys, 'color': Colors.red},
-    {'name': 'خوراکی', 'icon': Icons.fastfood, 'color': Colors.amber},
-    {'name': 'دیجیتال', 'icon': Icons.computer, 'color': Colors.indigo},
+    {
+      'name': 'سیستم ترمز',
+      'icon': Icons.panorama_fish_eye,
+      'color': Colors.red
+    },
+    {'name': 'سیستم خنک‌کننده', 'icon': Icons.ac_unit, 'color': Colors.cyan},
+    {
+      'name': 'سیستم برق و الکترونیک',
+      'icon': Icons.bolt,
+      'color': Colors.amber
+    },
+    {
+      'name': 'سیستم سوخت‌رسانی',
+      'icon': Icons.local_gas_station,
+      'color': Colors.orange
+    },
+    {'name': 'کمک فنر و فنر', 'icon': Icons.speed, 'color': Colors.teal},
+    {'name': 'چرخ و رینگ', 'icon': Icons.circle, 'color': Colors.grey},
+    {'name': 'بدنه و سپر', 'icon': Icons.car_repair, 'color': Colors.indigo},
+    {'name': 'چراغ و علائم', 'icon': Icons.lightbulb, 'color': Colors.yellow},
+    {'name': 'سیستم اگزوز', 'icon': Icons.smoke_free, 'color': Colors.brown},
+    {'name': 'فیلترها', 'icon': Icons.filter_alt, 'color': Colors.green},
   ];
 
   @override
@@ -43,14 +57,14 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("انتخاب دسته بندی محصول"),
+        title: const Text("انتخاب دسته‌بندی لوازم یدکی"),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(32),
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
             alignment: Alignment.center,
             child: Text(
-              "لطفاً دسته‌بندی مناسب برای محصول‌تان را انتخاب کنید.",
+              "لطفاً دسته‌بندی مناسب برای قطعه‌ی یدکی مورد نظر را انتخاب کنید.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 wordSpacing: -2,
@@ -74,7 +88,6 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           onTap: selectedCategoryIndex == null
               ? null
               : () {
-                  // Navigate to next screen
                   Navigator.push(
                     context,
                     CupertinoPageRoute(

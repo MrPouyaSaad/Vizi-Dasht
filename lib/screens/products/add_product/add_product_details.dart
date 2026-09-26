@@ -27,27 +27,77 @@ class _AddProductDetailsState extends State<AddProductDetails> {
   String? selectedProduct;
   bool isDiscount = false;
   final _formKey = GlobalKey<FormState>();
-  final discountController = TextEditingController();
   final scrollController = ScrollController();
 
-  // Sample product data
+  // Controllers for form fields
+  final brandController = TextEditingController();
+  final modelController = TextEditingController();
+  final yearController = TextEditingController();
+  final technicalCodeController = TextEditingController();
+  final stockController = TextEditingController();
+  final priceController = TextEditingController();
+  final discountController = TextEditingController();
+
+  // Sample product data for auto parts
   final List<Map<String, String>> products = [
     {
-      'name': 'روغن کنجد بی بو 450 میلی‌لیتری احمد اردایران',
-      'image': 'assets/images/1526890419.jpg',
-      'code': 'PRD-001'
+      'name': 'کمک فنر جلو پژو 206',
+      'image': 'assets/images/shock_absorber.jpg',
+      'code': 'PRD-001',
+      'brand': 'ساکس',
+      'model': '206',
+      'year': '1385-1400',
+      'technicalCode': 'SF-206-01'
     },
     {
-      'name': 'ماکارونی فرمی شوئینگر هورنلی 500 گرمی تک‌ماکارون',
-      'image': 'assets/images/6260100320116(1).jpg',
-      'code': 'PRD-002'
+      'name': 'لنت ترمز عقب پراید',
+      'image': 'assets/images/brake_pad.jpg',
+      'code': 'PRD-002',
+      'brand': 'آمپر',
+      'model': 'پراید 131',
+      'year': '1375-1400',
+      'technicalCode': 'LB-131-02'
     },
     {
-      'name': 'پاستا نیمه آماده پنه ریگاته با سبزیجات 180 گرمی تک‌ماکارون',
-      'image': 'assets/images/1509547706.jpg',
-      'code': 'PRD-003'
+      'name': 'فیلتر روغن 405',
+      'image': 'assets/images/oil_filter.jpg',
+      'code': 'PRD-003',
+      'brand': 'مان',
+      'model': '405',
+      'year': '1370-1395',
+      'technicalCode': 'OF-405-03'
+    },
+    {
+      'name': 'ترمومتر موتور سمند',
+      'image': 'assets/images/thermostat.jpg',
+      'code': 'PRD-004',
+      'brand': 'ورنات',
+      'model': 'سمند',
+      'year': '1380-1400',
+      'technicalCode': 'TH-SM-04'
+    },
+    {
+      'name': 'شمع جرقه زنی تیبا',
+      'image': 'assets/images/spark_plug.jpg',
+      'code': 'PRD-005',
+      'brand': 'بوش',
+      'model': 'تیبا',
+      'year': '1385-1400',
+      'technicalCode': 'SP-TB-05'
     },
   ];
+
+  @override
+  void dispose() {
+    brandController.dispose();
+    modelController.dispose();
+    yearController.dispose();
+    technicalCodeController.dispose();
+    stockController.dispose();
+    priceController.dispose();
+    discountController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,15 +105,18 @@ class _AddProductDetailsState extends State<AddProductDetails> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isEdit ? 'ویرایش محصول' : 'جزئیات محصول'),
+        title: Text(widget.isEdit ? 'ویرایش قطعه یدکی' : 'افزودن قطعه یدکی'),
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: theme.primaryColor,
         actions: widget.isEdit
             ? [
                 IconButton(
                   onPressed: () => _showDeleteDialog(),
                   icon: Icon(Icons.delete_outline,
                       color: theme.colorScheme.error),
-                  tooltip: 'حذف محصول',
+                  tooltip: 'حذف قطعه',
                 )
               ]
             : null,
@@ -74,15 +127,19 @@ class _AddProductDetailsState extends State<AddProductDetails> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildHeaderInfo(theme),
+            const SizedBox(height: 16),
             if (!widget.isEdit) _buildProductSelector(theme),
             if (selectedProduct != null || widget.isEdit)
               _buildSelectedProductCard(theme),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             Form(
               key: _formKey,
               child: Column(
                 children: [
-                  _buildInputSection(theme),
+                  _buildTechnicalSection(theme),
+                  const SizedBox(height: 16),
+                  _buildInventorySection(theme),
                   const SizedBox(height: 16),
                   _buildPricingSection(theme),
                   const SizedBox(height: 24),
@@ -96,11 +153,39 @@ class _AddProductDetailsState extends State<AddProductDetails> {
     );
   }
 
+  Widget _buildHeaderInfo(ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      decoration: BoxDecoration(
+        color: theme.primaryColor.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.primaryColor.withOpacity(0.1)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline, color: theme.primaryColor, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              widget.isEdit
+                  ? 'در حال ویرایش قطعه یدکی با کد #${widget.id}'
+                  : 'برای افزودن قطعه جدید، ابتدا محصول را جستجو یا اسکن کنید',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.primaryColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildProductSelector(ThemeData theme) {
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       shadowColor: theme.colorScheme.primary.withOpacity(0.1),
       child: Padding(
@@ -113,7 +198,7 @@ class _AddProductDetailsState extends State<AddProductDetails> {
                 Icon(Icons.search, color: theme.primaryColor),
                 const SizedBox(width: 8),
                 Text(
-                  'انتخاب محصول',
+                  'انتخاب قطعه یدکی',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.primaryColor,
@@ -123,6 +208,7 @@ class _AddProductDetailsState extends State<AddProductDetails> {
             ),
             const SizedBox(height: 12),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: DropdownSearch<String>(
@@ -132,134 +218,99 @@ class _AddProductDetailsState extends State<AddProductDetails> {
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.search, size: 20),
                           border: OutlineInputBorder(),
-                          labelText: 'جستجو',
+                          labelText: 'جستجو در قطعات',
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 14,
+                          ),
                         ),
                       ),
                       itemBuilder: (context, item, isSelected) {
                         final product = products
                             .firstWhere((product) => product['name'] == item);
                         return ListTile(
-                          leading: Image.asset(
-                            product['image']!,
+                          leading: Container(
                             width: 40,
                             height: 40,
-                            fit: BoxFit.cover,
+                            decoration: BoxDecoration(
+                              color: theme.primaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.car_repair,
+                                color: theme.primaryColor),
                           ),
                           title: Text(
                             product['name']!,
                             style: const TextStyle(fontSize: 14),
                           ),
+                          subtitle: Text(
+                            'کد: ${product['code']} | ${product['brand']}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          trailing: Text(
+                            product['technicalCode']!,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey[500],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         );
                       },
                       menuProps: MenuProps(
-                        animationDuration: Duration(milliseconds: 300),
+                        animationDuration: const Duration(milliseconds: 300),
                         barrierCurve: Curves.easeInOut,
                         barrierDismissible: true,
-                        borderRadius: BorderRadius.circular(10),
-                        positionCallback: (popupButton, overlay) {
-                          final buttonRect =
-                              popupButton.localToGlobal(Offset.zero) &
-                                  popupButton.size;
-
-                          return RelativeRect.fromRect(
-                            Rect.fromLTRB(
-                              32,
-                              buttonRect.bottom,
-                              overlay.size.width - 32,
-                              overlay.size.height,
-                            ),
-                            Offset.zero & overlay.size,
-                          );
-                        },
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     items: products.map((product) => product['name']!).toList(),
                     dropdownDecoratorProps: DropDownDecoratorProps(
                       dropdownSearchDecoration: InputDecoration(
-                        // labelText: 'انتخاب محصول',
-                        hintText: 'محصول مورد نظر را انتخاب کنید',
+                        hintText: 'نام قطعه را جستجو کنید',
                         alignLabelWithHint: true,
-                        // floatingLabelBehavior: FloatingLabelBehavior.always,
-
-                        contentPadding: EdgeInsets.symmetric(
+                        contentPadding: const EdgeInsets.symmetric(
                           horizontal: Constants.primaryPadding,
-                          vertical: 10,
+                          vertical: 12,
                         ),
                         border: const OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.grey[50],
                       ),
-                      baseStyle: const TextStyle(fontSize: 12),
+                      baseStyle: const TextStyle(fontSize: 13),
                     ),
                     onChanged: (value) {
                       setState(() {
                         selectedProduct = value;
+                        final product = products
+                            .firstWhere((p) => p['name'] == selectedProduct);
+                        // Auto-fill fields
+                        brandController.text = product['brand'] ?? '';
+                        modelController.text = product['model'] ?? '';
+                        technicalCodeController.text =
+                            product['technicalCode'] ?? '';
                       });
                     },
                     selectedItem: selectedProduct,
                   ),
                 ),
-                SizedBox(width: 8),
-                SizedBox(
-                  height: Constants.primaryButtonHeight - 4,
-                  // width: double.infinity,
-                  child: MyElevatedButton(
-                    child: Icon(Icons.qr_code_scanner, size: 30),
-                    // title: 'اسکن بارکد',
-                    onTap: () async {
-                      final status = await Permission.camera.request();
-
-                      if (status.isGranted) {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.black87,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.vertical(top: Radius.circular(16)),
-                          ),
-                          builder: (context) {
-                            return SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.75,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  MobileScanner(
-                                    onDetect: (capture) {
-                                      final barcode = capture.barcodes.first;
-                                      final value = barcode.rawValue;
-                                      if (value != null) {
-                                        log('📦 Barcode: $value');
-                                        Navigator.of(context).pop();
-                                      }
-                                    },
-                                  ),
-                                  Positioned(
-                                    top: MediaQuery.of(context).size.height *
-                                            0.85 /
-                                            2 -
-                                        1,
-                                    child: Container(
-                                      width: 250,
-                                      height: 2,
-                                      color: Colors.redAccent,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      } else {
-                        Get.snackbar(
-                          'دسترسی رد شد',
-                          'اجازه دسترسی به دوربین داده نشده است.',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.red,
-                          colorText: Colors.white,
-                        );
-                      }
-                    },
+                const SizedBox(width: 8),
+                Container(
+                  height: Constants.primaryButtonHeight,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: theme.primaryColor,
                   ),
-                )
+                  child: IconButton(
+                    onPressed: () => _startBarcodeScanner(context),
+                    icon: const Icon(Icons.qr_code_scanner,
+                        color: Colors.white, size: 28),
+                    tooltip: 'اسکن بارکد قطعه',
+                  ),
+                ),
               ],
             ),
           ],
@@ -271,78 +322,159 @@ class _AddProductDetailsState extends State<AddProductDetails> {
   Widget _buildSelectedProductCard(ThemeData theme) {
     final product = widget.isEdit
         ? {
-            'name': 'محصول نمونه',
+            'name': 'قطعه یدکی انتخاب شده',
             'image': 'assets/images/placeholder.jpg',
-            'code': 'PRD-${widget.id}'
+            'code': 'PRD-${widget.id}',
+            'brand': 'برند نمونه',
+            'model': 'مدل نمونه',
+            'technicalCode': 'TECH-${widget.id}'
           }
-        : products.firstWhere((p) => p['name'] == selectedProduct);
+        : products.firstWhere((p) => p['name'] == selectedProduct,
+            orElse: () => {
+                  'name': 'قطعه انتخاب نشده',
+                  'image': 'assets/images/placeholder.jpg',
+                  'code': '---',
+                  'brand': '---',
+                  'model': '---',
+                  'technicalCode': '---'
+                });
 
     return Card(
       margin: const EdgeInsets.only(top: 16),
       elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(14),
         child: Row(
           children: [
             Container(
+              width: 70,
+              height: 70,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border:
-                      Border.all(color: theme.dividerColor.withOpacity(0.3))),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  product['image']!,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                ),
+                color: theme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: theme.dividerColor.withOpacity(0.2), width: 1),
               ),
+              child:
+                  Icon(Icons.car_repair, color: theme.primaryColor, size: 32),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     product['name']!,
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 6),
-                  Row(
+                  const SizedBox(height: 4),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
                     children: [
-                      Icon(Icons.tag, size: 16, color: theme.hintColor),
-                      const SizedBox(width: 4),
-                      Text(
-                        'کد محصول: ${product['code']}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.hintColor,
-                        ),
-                      ),
+                      _buildInfoChip('کد: ${product['code']}', theme),
+                      _buildInfoChip('برند: ${product['brand']}', theme),
+                      _buildInfoChip(
+                          'کد فنی: ${product['technicalCode']}', theme),
                     ],
                   ),
                 ],
               ),
             ),
-            Icon(Icons.check_circle, color: theme.primaryColor),
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: theme.primaryColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child:
+                  Icon(Icons.check_circle, color: theme.primaryColor, size: 22),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInputSection(ThemeData theme) {
+  Widget _buildInfoChip(String text, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 10,
+          color: Colors.grey[700],
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTechnicalSection(ThemeData theme) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildSectionHeader(
+                icon: Icons.engineering, title: 'اطلاعات فنی قطعه'),
+            const SizedBox(height: 12),
+            _buildFormField(
+              controller: brandController,
+              label: 'برند قطعه',
+              isRequired: true,
+              icon: Icons.branding_watermark,
+              hint: 'مثال: بوش، ساکس، مان',
+            ),
+            _buildFormField(
+              controller: modelController,
+              label: 'مدل خودرو',
+              isRequired: true,
+              icon: Icons.directions_car,
+              hint: 'مثال: پژو 206، پراید، سمند',
+            ),
+            _buildFormField(
+              controller: yearController,
+              label: 'سال ساخت خودرو',
+              isRequired: false,
+              icon: Icons.calendar_today,
+              hint: 'مثال: 1385 تا 1400',
+              keyboardType: TextInputType.text,
+            ),
+            _buildFormField(
+              controller: technicalCodeController,
+              label: 'کد فنی قطعه',
+              isRequired: true,
+              icon: Icons.qr_code,
+              hint: 'مثال: SF-206-01',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInventorySection(ThemeData theme) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -352,22 +484,26 @@ class _AddProductDetailsState extends State<AddProductDetails> {
                 icon: Icons.inventory_2, title: 'موجودی و بسته‌بندی'),
             const SizedBox(height: 12),
             _buildFormField(
+              controller: stockController,
               label: 'تعداد موجود برای فروش',
               isRequired: true,
               keyboardType: TextInputType.number,
               icon: Icons.store,
+              hint: '0',
             ),
             _buildFormField(
               label: 'تعداد در هر بسته',
               isRequired: true,
               keyboardType: TextInputType.number,
               icon: Icons.layers,
+              hint: '1',
             ),
             _buildFormField(
-              label: 'تاریخ انقضاء',
-              isRequired: true,
+              label: 'تاریخ انقضاء (اختیاری)',
+              isRequired: false,
               hint: 'YYYY/MM/DD',
               icon: Icons.calendar_today,
+              keyboardType: TextInputType.datetime,
             ),
           ],
         ),
@@ -379,27 +515,29 @@ class _AddProductDetailsState extends State<AddProductDetails> {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _buildSectionHeader(icon: Icons.attach_money, title: 'قیمت‌گذاری'),
+            _buildSectionHeader(
+                icon: Icons.attach_money, title: 'قیمت‌گذاری قطعه'),
             const SizedBox(height: 12),
             _buildFormField(
               padding: EdgeInsets.zero,
-              label: 'قیمت هر بسته',
+              controller: priceController,
+              label: 'قیمت هر قطعه (تومان)',
               isRequired: true,
               keyboardType: TextInputType.number,
-              prefix: 'تومان',
               icon: Icons.money,
+              hint: '0',
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'میانگین قیمت',
+                  'میانگین قیمت بازار',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -408,7 +546,7 @@ class _AddProductDetailsState extends State<AddProductDetails> {
                   ),
                 ),
                 MyTextButton(
-                  title: '188 هزار تومان',
+                  title: '188,000 تومان',
                   onTap: () {
                     setState(() {});
                   },
@@ -420,35 +558,43 @@ class _AddProductDetailsState extends State<AddProductDetails> {
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             _buildFormField(
-              label: 'قیمت 5 بسته',
+              label: 'قیمت عمده (5 عدد به بالا)',
               isRequired: false,
               keyboardType: TextInputType.number,
-              prefix: 'تومان',
-              icon: Icons.money,
+              icon: Icons.attach_money,
+              hint: '0',
             ),
             _buildFormField(
-              label: 'قیمت 10 بسته',
-              isRequired: false,
-              keyboardType: TextInputType.number,
-              prefix: 'تومان',
-              icon: Icons.money,
-            ),
-            _buildFormField(
-              label: 'قیمت مصرف کننده (روی جلد)',
+              label: 'قیمت مصرف‌کننده (پیشنهادی)',
               isRequired: true,
               keyboardType: TextInputType.number,
-              prefix: 'تومان',
               icon: Icons.price_check,
+              hint: '0',
             ),
-            _buildFormField(
-              label: 'درصد تخفیف',
-              isRequired: false,
-              keyboardType: TextInputType.number,
-              prefix: '%',
-              hint: '0-99',
-              icon: Icons.discount,
+            Row(
+              children: [
+                Expanded(
+                  child: _buildFormField(
+                    label: 'درصد تخفیف',
+                    isRequired: false,
+                    keyboardType: TextInputType.number,
+                    icon: Icons.discount,
+                    hint: '0-99',
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildFormField(
+                    label: 'مبلغ تخفیف (تومان)',
+                    isRequired: false,
+                    keyboardType: TextInputType.number,
+                    icon: Icons.money_off,
+                    hint: '0',
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -461,8 +607,15 @@ class _AddProductDetailsState extends State<AddProductDetails> {
 
     return Row(
       children: [
-        Icon(icon, color: theme.primaryColor, size: 20),
-        const SizedBox(width: 4),
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: theme.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: theme.primaryColor, size: 20),
+        ),
+        const SizedBox(width: 8),
         Text(
           title,
           style: theme.textTheme.titleMedium?.copyWith(
@@ -478,8 +631,7 @@ class _AddProductDetailsState extends State<AddProductDetails> {
     required String label,
     bool isRequired = true,
     String? hint,
-    String? prefix,
-    EdgeInsetsGeometry padding = const EdgeInsets.only(bottom: 12),
+    EdgeInsetsGeometry padding = const EdgeInsets.only(bottom: 14),
     IconData? icon,
     TextInputType? keyboardType,
     TextEditingController? controller,
@@ -489,15 +641,14 @@ class _AddProductDetailsState extends State<AddProductDetails> {
       child: MyTextField(
         controller: controller,
         keyboardType: keyboardType,
-        pbottom: 8,
+        pbottom: 4,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 12,
+          horizontal: 14,
           vertical: 16,
         ),
-        labelText: '$label${isRequired ? '*' : ''}',
+        labelText: '$label${isRequired ? ' *' : ''}',
         hintText: hint,
         prefixIcon: icon != null ? Icon(icon, size: 20) : null,
-        // prefixText: prefix,
         validator: isRequired
             ? (value) => value?.isEmpty ?? true ? 'این فیلد الزامی است' : null
             : null,
@@ -515,7 +666,7 @@ class _AddProductDetailsState extends State<AddProductDetails> {
             _submitForm();
           } else {
             final startPosition = scrollController.position.minScrollExtent;
-            final duration = Duration(milliseconds: 250);
+            final duration = const Duration(milliseconds: 250);
             scrollController.animateTo(
               startPosition,
               duration: duration,
@@ -524,87 +675,283 @@ class _AddProductDetailsState extends State<AddProductDetails> {
           }
         },
         icon: Icon(
-          widget.isEdit ? Icons.save : Icons.check_circle,
+          widget.isEdit ? Icons.save : Icons.add_circle_outline,
           size: 24,
+          color: Colors.white,
         ),
-        title: widget.isEdit ? 'ذخیره تغییرات' : 'اضافه کردن محصول',
+        title: widget.isEdit ? 'ذخیره تغییرات' : 'افزودن قطعه یدکی',
+        backgroundColor: theme.primaryColor,
+        foregroundColor: Colors.white,
+      ),
+    );
+  }
+
+  Future<void> _startBarcodeScanner(BuildContext context) async {
+    final status = await Permission.camera.request();
+
+    if (status.isGranted) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.black,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.75,
+            padding: const EdgeInsets.only(top: 16),
+            child: Column(
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[600],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'بارکد قطعه را اسکن کنید',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      MobileScanner(
+                        onDetect: (capture) {
+                          final barcode = capture.barcodes.first;
+                          final value = barcode.rawValue;
+                          if (value != null) {
+                            log('📦 Barcode: $value');
+                            Get.back();
+                            Get.snackbar(
+                              'بارکد خوانده شد',
+                              'کد: $value',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                              icon: const Icon(Icons.check_circle,
+                                  color: Colors.white),
+                            );
+                            // Auto-fill technical code
+                            technicalCodeController.text = value;
+                          }
+                        },
+                      ),
+                      // Scan overlay frame
+                      _buildScanOverlay(),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: MyElevatedButton(
+                    onTap: () => Get.back(),
+                    title: 'لغو اسکن',
+                    backgroundColor: Colors.grey[800]!,
+                    foregroundColor: Colors.white,
+                    // height: 48,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    } else {
+      Get.snackbar(
+        'دسترسی رد شد',
+        'برای اسکن بارکد به دسترسی دوربین نیاز است.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        icon: const Icon(Icons.camera_alt, color: Colors.white),
+        duration: const Duration(seconds: 4),
+        mainButton: TextButton(
+          onPressed: () => openAppSettings(),
+          child: const Text(
+            'تنظیمات',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _buildScanOverlay() {
+    return Container(
+      width: 250,
+      height: 250,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.redAccent, width: 3),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Stack(
+        children: [
+          // Corner markers
+          Positioned(
+            top: -2,
+            left: -2,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: Colors.redAccent, width: 4),
+                  left: BorderSide(color: Colors.redAccent, width: 4),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: -2,
+            right: -2,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: Colors.redAccent, width: 4),
+                  right: BorderSide(color: Colors.redAccent, width: 4),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -2,
+            left: -2,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Colors.redAccent, width: 4),
+                  left: BorderSide(color: Colors.redAccent, width: 4),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -2,
+            right: -2,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Colors.redAccent, width: 4),
+                  right: BorderSide(color: Colors.redAccent, width: 4),
+                ),
+              ),
+            ),
+          ),
+          // Center crosshair
+          Positioned(
+            top: 125 - 1,
+            left: 125 - 20,
+            child: Container(
+              width: 40,
+              height: 2,
+              color: Colors.redAccent.withOpacity(0.5),
+            ),
+          ),
+          Positioned(
+            top: 125 - 20,
+            left: 125 - 1,
+            child: Container(
+              width: 2,
+              height: 40,
+              color: Colors.redAccent.withOpacity(0.5),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   void _submitForm() {
-    // Handle form submission
     Get.back();
     Get.snackbar(
       'موفقیت آمیز',
-      widget.isEdit ? 'محصول با موفقیت ویرایش شد' : 'محصول با موفقیت اضافه شد',
+      widget.isEdit
+          ? 'قطعه یدکی با موفقیت ویرایش شد'
+          : 'قطعه یدکی با موفقیت اضافه شد',
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.green,
       colorText: Colors.white,
       icon: const Icon(Icons.check_circle, color: Colors.white),
+      duration: const Duration(seconds: 3),
     );
   }
 
   void _showDeleteDialog() {
     Get.dialog(
       AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            Icon(Icons.warning, color: Colors.orange),
-            const SizedBox(width: 8),
-            const Text('حذف محصول'),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child:
+                  const Icon(Icons.warning_amber_rounded, color: Colors.orange),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'حذف قطعه یدکی',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         content: const Text(
-            'آیا از حذف این محصول اطمینان دارید؟ این عمل غیرقابل بازگشت است.'),
+          'آیا از حذف این قطعه یدکی اطمینان دارید؟',
+          style: TextStyle(fontSize: 15),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('انصراف'),
+            child: const Text(
+              'انصراف',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade50,
-              foregroundColor: Colors.red,
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
             onPressed: () {
               Get.back();
               Get.back();
               Get.snackbar(
                 'حذف شد',
-                'محصول با موفقیت حذف شد',
+                'قطعه یدکی با موفقیت حذف شد',
                 snackPosition: SnackPosition.BOTTOM,
                 backgroundColor: Colors.red,
                 colorText: Colors.white,
-                icon: const Icon(Icons.delete, color: Colors.white),
+                icon: const Icon(Icons.delete_outline, color: Colors.white),
               );
             },
-            child: const Text('حذف محصول'),
+            child: const Text('حذف قطعه'),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class BarcodeScannerPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('اسکن بارکد')),
-      body: MobileScanner(
-        onDetect: (capture) {
-          final barcode = capture.barcodes.first;
-          if (barcode.rawValue != null) {
-            debugPrint('Barcode found: ${barcode.rawValue}');
-            Get.back(); // خروج از صفحه اسکن
-            Get.snackbar(
-              'بارکد خوانده شد',
-              'کد: ${barcode.rawValue}',
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          }
-        },
       ),
     );
   }

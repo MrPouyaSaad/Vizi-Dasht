@@ -87,8 +87,7 @@ class MyCommentItem extends StatelessWidget {
               Flexible(
                 child: Wrap(
                   children: [
-                    const Text(
-                        'پاستا نیمه آماده پنه ریگاته با سبزیجات 180 گرمی تک‌ماکارون'),
+                    const Text('کمک فنر جلو پژو 206'),
                   ],
                 ),
               ),

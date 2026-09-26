@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
               if (state is HomeLoading) {
-                return DashboardShimmer();
+                return DashboardShimmer().marginAll(Constants.primaryPadding);
               } else
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,21 +341,21 @@ class MostViewProductRep extends StatelessWidget {
               children: [
                 buildTopVisitedProductCard(
                   context,
-                  name: 'چیپس نمکی بزرگ',
+                  name: 'تسمه تایم سمند',
                   visits: '۲۳۴۵',
                   rank: 1,
                   image: 'assets/images/6260100320116(1).jpg',
                 ),
                 buildTopVisitedProductCard(
                   context,
-                  name: 'نوشابه خانواده کوکا',
+                  name: 'کمک فنر جلو پژو 206',
                   visits: '۱۸۲۰',
                   rank: 2,
                   image: 'assets/images/1509547706.jpg',
                 ),
                 buildTopVisitedProductCard(
                   context,
-                  name: 'ویفر شکلاتی فندقی',
+                  name: 'وایر تقویتی پژو 206',
                   visits: '۱۶۰۵',
                   rank: 3,
                   image: 'assets/images/1526890419.jpg',
@@ -652,7 +652,7 @@ class LowStockList extends StatelessWidget {
             itemBuilder: (context, index) {
               return buildLowStockItem(
                 context,
-                name: 'product.name',
+                name: 'کمک فنر جلو پژو 206',
                 stock: 1,
                 image: 'assets/images/1509547706.jpg',
               ).marginOnly(

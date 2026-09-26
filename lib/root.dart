@@ -292,7 +292,7 @@ class _RootScreenState extends State<RootScreen> {
                       right: -10,
                       top: -10,
                       child: RippleBadge(
-                        value: 5,
+                        value: 0,
                         color: Theme.of(context)
                             .colorScheme
                             .surfaceContainerHighest,

@@ -15,6 +15,73 @@ import 'rec_add_product.dart';
 class ProductsScreen extends StatelessWidget {
   const ProductsScreen({super.key});
 
+  final List<Map<String, String>> products = const [
+    {
+      'name': 'واشر گلویی اگزوز تیگو ۷',
+      'image': 'assets/images/1.jpg',
+      'code': 'PRD-001',
+      'brand': 'ساکس',
+      'price': 'برای استعلام با شماره 09143257407 تماس بگیرید',
+      'stock': '15',
+    },
+    {
+      'name': 'واشر منیفولد دود x22 , mvm 315',
+      'image': 'assets/images/2.jpg',
+      'code': 'PRD-002',
+      'brand': 'آمپر',
+      'price': 'برای استعلام با شماره 09143257407 تماس بگیرید',
+      'stock': '5',
+    },
+    {
+      'name': 'واشر منیفولد دود تیگو ۷',
+      'image': 'assets/images/3.jpg',
+      'code': 'PRD-003',
+      'brand': 'مان',
+      'price': 'برای استعلام با شماره 09143257407 تماس بگیرید',
+      'stock': '0',
+    },
+    {
+      'name': 'واشر بغل اگزوز تیگو ۵',
+      'image': 'assets/images/4.jpg',
+      'code': 'PRD-004',
+      'brand': 'ساکس',
+      'price': 'برای استعلام با شماره 09143257407 تماس بگیرید',
+      'stock': '8',
+    },
+    {
+      'name': 'واشر منیفولد دود ۵۳۰',
+      'image': 'assets/images/5.jpg',
+      'code': 'PRD-005',
+      'brand': 'آمپر',
+      'price': 'برای استعلام با شماره 09143257407 تماس بگیرید',
+      'stock': '3',
+    },
+    {
+      'name': 'واشر گلویی اگزوز دو پیچ mvm110',
+      'image': 'assets/images/6.jpg',
+      'code': 'PRD-006',
+      'brand': 'مان',
+      'price': 'برای استعلام با شماره 09143257407 تماس بگیرید',
+      'stock': '12',
+    },
+    {
+      'name': 'واشر گلویی اگزوز دو پیچ ۵۳۰',
+      'image': 'assets/images/7.jpg',
+      'code': 'PRD-007',
+      'brand': 'ساکس',
+      'price': 'برای استعلام با شماره 09143257407 تماس بگیرید',
+      'stock': '0',
+    },
+    {
+      'name': 'واشر گلویی اگزوز سه پیچ ۵۳۰',
+      'image': 'assets/images/8.jpg',
+      'code': 'PRD-008',
+      'brand': 'آمپر',
+      'price': 'برای استعلام با شماره 09143257407 تماس بگیرید',
+      'stock': '20',
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -24,9 +91,10 @@ class ProductsScreen extends StatelessWidget {
       child: BlocBuilder<ProductScreenBloc, ProductScreenState>(
         builder: (context, state) {
           if (state is ProductScreenLoading) {
-            return ProductShimmer();
-          } else
+            return const ProductShimmer();
+          } else {
             return Scaffold(
+              backgroundColor: Colors.grey[50],
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerFloat,
               floatingActionButton: SizedBox(
@@ -36,14 +104,14 @@ class ProductsScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => CategorySelectionScreen(),
+                        builder: (context) => const CategorySelectionScreen(),
                       ),
                     );
                   },
-                  backgroundColor:
-                      themeData.colorScheme.surfaceContainerHighest,
-                  icon: Icon(Icons.add),
-                  title: 'افزودن محصول جدید',
+                  backgroundColor: themeData.primaryColor,
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  title: 'افزودن قطعه یدکی جدید',
+                  foregroundColor: Colors.white,
                 ),
               ).marginSymmetric(horizontal: 24),
               body: SafeArea(
@@ -51,30 +119,48 @@ class ProductsScreen extends StatelessWidget {
                   headerSliverBuilder: (context, innerBoxIsScrolled) {
                     return [
                       SliverAppBar(
-                        backgroundColor: themeData.colorScheme.surface,
-                        shadowColor: themeData.colorScheme.surface,
-                        surfaceTintColor: themeData.colorScheme.surface,
-                        toolbarHeight: 72,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        surfaceTintColor: Colors.transparent,
+                        toolbarHeight: 80,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(18),
-                            bottomRight: Radius.circular(18),
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(24),
+                            bottomRight: Radius.circular(24),
                           ),
                         ),
-                        title: MyTextField(
-                          textAlign: TextAlign.right,
-                          textAlignVertical: TextAlignVertical.center,
-                          hintText: 'جستجو',
-                          isDense: true,
-                          alignLabelWithHint: true,
-                          prefixIcon: Icon(
-                            Icons.search,
-                            size: 26,
+                        title: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 12,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
-                        ).marginOnly(top: 12),
+                          child: MyTextField(
+                            textAlign: TextAlign.right,
+                            textAlignVertical: TextAlignVertical.center,
+                            hintText: 'جستجو در قطعات یدکی',
+                            isDense: true,
+                            alignLabelWithHint: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
+                            ),
+                            prefixIcon: const Icon(
+                              Icons.search,
+                              size: 24,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ).marginOnly(top: 12, bottom: 8),
                         automaticallyImplyLeading: false,
                         centerTitle: true,
-                        elevation: 1.0,
+                        elevation: 0,
                         floating: true,
                         pinned: false,
                         snap: true,
@@ -82,155 +168,323 @@ class ProductsScreen extends StatelessWidget {
                     ];
                   },
                   body: ListView.builder(
-                    itemCount: 10,
-                    padding: EdgeInsets.only(bottom: 78),
+                    itemCount: products.length + 1,
+                    padding: const EdgeInsets.only(bottom: 90, top: 8),
                     itemBuilder: (context, index) {
-                      final count = index == 3
-                          ? 0
-                          : index == 1
-                              ? 5
-                              : 15;
-                      bool isEmpty = count == 0;
-                      if (index == 0)
-                        return Column(
-                          children: [
-                            AppTitle(title: 'محصولات پیشنهادی')
-                                .marginOnly(right: 16),
-                            RecomendedAddProducts(),
-                          ],
-                        ).marginOnly(top: 8, bottom: 16);
-                      else
+                      if (index == 0) {
+                        return SizedBox();
+                        // return Column(
+                        //   children: [
+                        //     Row(
+                        //       children: [
+                        //         const SizedBox(width: 16),
+                        //         Expanded(
+                        //           child: AppTitle(title: 'قطعات پیشنهادی'),
+                        //         ),
+                        //         TextButton(
+                        //           onPressed: () {},
+                        //           child: Text(
+                        //             'مشاهده همه',
+                        //             style: TextStyle(
+                        //               fontSize: 12,
+                        //               color: themeData.primaryColor,
+                        //               fontWeight: FontWeight.w600,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //     const RecomendedAddProducts(),
+                        //   ],
+                        // ).marginOnly(top: 8, bottom: 16);
+                      } else {
+                        final productIndex = index - 1;
+                        final product = products[productIndex];
+                        final stock =
+                            int.tryParse(product['stock'] ?? '0') ?? 0;
+                        final isOutOfStock = stock == 0;
+                        final isLowStock = stock > 0 && stock <= 5;
+
                         return GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => AddProductDetails(
-                                  id: index,
+                                  id: productIndex + 1,
                                   isEdit: true,
                                 ),
                               ),
                             );
                           },
                           child: Container(
-                            padding: EdgeInsets.all(12),
-                            margin: EdgeInsets.symmetric(
-                                vertical: Constants.primaryPadding / 4),
-                            decoration: BoxDecoration(
-                              borderRadius: Constants.primaryRadius,
-                              color: isEmpty
-                                  ? Colors.grey.shade200
-                                  : themeData.colorScheme.surface,
-                              boxShadow: Constants.primaryBoxShadow(context,
-                                  colorOpacity: 0.05),
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 6,
                             ),
-                            child: Column(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(18),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 16,
+                                  offset: const Offset(0, 3),
+                                  spreadRadius: 0,
+                                ),
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.02),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 1),
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                              border: Border.all(
+                                color: isOutOfStock
+                                    ? Colors.grey.shade100
+                                    : Colors.transparent,
+                                width: 1,
+                              ),
+                            ),
+                            child: Stack(
                               children: [
-                                Row(
-                                  children: [
-                                    Stack(
-                                      children: [
-                                        SizedBox(
-                                            width: 54,
-                                            height: 54,
-                                            child: Image.asset(
-                                                'assets/images/1509547706.jpg')),
-                                        if (count == 0)
-                                          Container(
-                                            width: 54,
-                                            height: 54,
-                                            color:
-                                                Colors.grey.withOpacity(0.35),
-                                          )
-                                      ],
+                                // Stock Status Badge
+                                if (!isOutOfStock)
+                                  Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: isLowStock
+                                            ? Colors.orange.shade50
+                                            : Colors.green.shade50,
+                                        borderRadius: const BorderRadius.only(
+                                          topRight: Radius.circular(18),
+                                          bottomLeft: Radius.circular(12),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            isLowStock
+                                                ? Icons.warning_amber_rounded
+                                                : Icons.check_circle,
+                                            size: 12,
+                                            color: isLowStock
+                                                ? Colors.orange.shade700
+                                                : Colors.green.shade700,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            isLowStock
+                                                ? '${stock} عدد باقی'
+                                                : 'موجود',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w600,
+                                              color: isLowStock
+                                                  ? Colors.orange.shade700
+                                                  : Colors.green.shade700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    SizedBox(
-                                        width: Constants.primaryPadding / 2),
+                                  ),
+                                if (isOutOfStock)
+                                  Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade100,
+                                        borderRadius: const BorderRadius.only(
+                                          topRight: Radius.circular(18),
+                                          bottomLeft: Radius.circular(12),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.close,
+                                            size: 12,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            'ناموجود',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Product Image
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(14),
+                                      child: Image.asset(
+                                        product['image'] ?? '',
+                                        width: 80,
+                                        height: 80,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Container(
+                                            width: 80,
+                                            height: 80,
+                                            decoration: BoxDecoration(
+                                              color: themeData.primaryColor
+                                                  .withOpacity(0.06),
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                            ),
+                                            child: Icon(
+                                              Icons.car_repair,
+                                              color: themeData.primaryColor
+                                                  .withOpacity(0.3),
+                                              size: 32,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 14),
+
+                                    // Product Info
                                     Expanded(
-                                      child: Text(
-                                        'پاستا نیمه آماده پنه ریگاته با سبزیجات 180 گرمی تک‌ماکارون',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            wordSpacing: -1),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            product['name'] ?? '',
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w700,
+                                              height: 1.3,
+                                              color: isOutOfStock
+                                                  ? Colors.grey.shade500
+                                                  : themeData
+                                                      .colorScheme.onSurface,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 6),
+
+                                          // Brand & Code
+                                          Row(
+                                            children: [
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 8,
+                                                  vertical: 2,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: themeData.primaryColor
+                                                      .withOpacity(0.08),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                ),
+                                                child: Text(
+                                                  product['brand'] ?? '',
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    color:
+                                                        themeData.primaryColor,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                '• ${product['code']}',
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.grey.shade400,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10),
+
+                                          // Price & Edit
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  isOutOfStock
+                                                      ? 'ناموجود'
+                                                      : 'موجود',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: isOutOfStock
+                                                        ? Colors.grey.shade400
+                                                        : themeData.colorScheme
+                                                            .primary,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.all(6),
+                                                decoration: BoxDecoration(
+                                                  color: isOutOfStock
+                                                      ? Colors.grey.shade100
+                                                      : themeData.primaryColor
+                                                          .withOpacity(0.08),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: Icon(
+                                                  Icons.edit_outlined,
+                                                  size: 18,
+                                                  color: isOutOfStock
+                                                      ? Colors.grey.shade400
+                                                      : themeData.primaryColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: Constants.primaryPadding),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    isEmpty
-                                        ? Text(
-                                            'ناموجود',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: themeData
-                                                    .colorScheme.secondary),
-                                          )
-                                        : Text.rich(
-                                            TextSpan(
-                                              text: '$count بسته ',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  color: count <= 5
-                                                      ? themeData.colorScheme
-                                                          .errorContainer
-                                                      : null,
-                                                  fontWeight: FontWeight.bold),
-                                              children: [
-                                                TextSpan(
-                                                  text: 'باقیمانده ',
-                                                  style: TextStyle(
-                                                    color: count <= 5
-                                                        ? themeData.colorScheme
-                                                            .errorContainer
-                                                            .withOpacity(0.7)
-                                                        : themeData.colorScheme
-                                                            .secondary,
-                                                    fontSize: 11,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                    SizedBox(
-                                        width: Constants.primaryPadding / 2),
-                                    Flexible(
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 6, horizontal: 8),
-                                        decoration: BoxDecoration(
-                                          color: count == 0
-                                              ? themeData.colorScheme.secondary
-                                              : themeData.colorScheme.primary,
-                                          borderRadius: Constants.primaryRadius,
-                                        ),
-                                        child: Text(
-                                          '580,000 تومان',
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            color:
-                                                themeData.colorScheme.surface,
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
                               ],
                             ),
                           ),
-                        ).marginOnly(left: 16, right: 16);
+                        );
+                      }
                     },
                   ),
                 ),
               ),
             );
+          }
         },
       ),
     );
